@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>Contact Form</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,18 +38,6 @@
             padding: 20px;
         }
 
-        .project-card {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            padding: 10px;
-        }
-
-        .project-card img {
-            width: 100%;
-            border-radius: 5px;
-        }
-
         form label {
             display: block;
             margin-bottom: 5px;
@@ -65,6 +53,17 @@
             border: 1px solid #ccc;
         }
 
+        form input[type="text"].invalid,
+        form input[type="email"].invalid,
+        form textarea.invalid {
+            border-color: red;
+        }
+
+        form span.error-message {
+            color: red;
+            font-size: 12px;
+        }
+
         form button {
             padding: 10px 20px;
             background-color: #333;
@@ -77,46 +76,81 @@
 </head>
 <body>
     <header>
-        <h1>John Doe</h1>
-        <nav>
-            <ul>
-                <li><a href="#intro">Introduction</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+        <h1>Contact Form</h1>
     </header>
-
-    <section id="intro">
-        <h2>Introduction</h2>
-        <p>Brief introduction about yourself...</p>
-    </section>
-
-    <section id="projects">
-        <h2>Projects</h2>
-        <div class="project-card">
-            <img src="images/project1.jpg" alt="Project 1">
-            <h3>Project 1 Title</h3>
-            <p>Description of Project 1...</p>
-        </div>
-        <div class="project-card">
-            <img src="images/project2.jpg" alt="Project 2">
-            <h3>Project 2 Title</h3>
-            <p>Description of Project 2...</p>
-        </div>
-    </section>
 
     <section id="contact">
         <h2>Contact</h2>
-        <form>
+        <form id="contact-form">
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+            <input type="text" id="name" name="name" required minlength="3">
+            <span class="error-message" id="name-error"></span>
+
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
+            <span class="error-message" id="email-error"></span>
+
             <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
+            <textarea id="message" name="message" required minlength="10"></textarea>
+            <span class="error-message" id="message-error"></span>
+
             <button type="submit">Send</button>
         </form>
     </section>
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            var nameInput = document.getElementById('name');
+            var emailInput = document.getElementById('email');
+            var messageInput = document.getElementById('message');
+            var nameError = document.getElementById('name-error');
+            var emailError = document.getElementById('email-error');
+            var messageError = document.getElementById('message-error');
+            var isValid = true;
+
+            // Reset previous validation errors
+            nameError.textContent = '';
+            emailError.textContent = '';
+            messageError.textContent = '';
+
+            // Validate name
+            if (nameInput.value.length < 3) {
+                nameError.textContent = 'Name should be at least 3 characters.';
+                nameInput.classList.add('invalid');
+                isValid = false;
+            } else {
+                nameInput.classList.remove('invalid');
+            }
+
+            // Validate email
+            if (!isValidEmail(emailInput.value)) {
+                emailError.textContent = 'Please enter a valid email address.';
+                emailInput.classList.add('invalid');
+                isValid = false;
+            } else {
+                emailInput.classList.remove('invalid');
+            }
+
+            // Validate message
+            if (messageInput.value.length < 10) {
+                messageError.textContent = 'Message should be at least 10 characters.';
+                messageInput.classList.add('invalid');
+                isValid = false;
+            } else {
+                messageInput.classList.remove('invalid');
+            }
+
+            // Prevent form submission if validation fails
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+
+        // Function to validate email format
+        function isValidEmail(email) {
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
 </body>
 </html>
